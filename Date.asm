@@ -379,15 +379,74 @@ Date: #char*Date (int day, int month, int year, char*Time)
 	add  $sp, $sp, 20
 	jr   $ra
 	
-Day: 
-	add  $v0, $0, 8
-	jr   $ra
+Day:
+	addi 	$sp, $sp, -12
+	sw	$ra, 8($sp)
+	sw	$t0, 4($sp)
+	sw	$t1, 0($sp)
+
+	lb	$t0, 0($a0)
+	addi	$t0, $t0, -48
+	
+	addi	$t1,$0, 10
+	mult	$t0, $t1
+	mflo	$t0
+	
+	lb 	$t1, 1($a0)
+	addi	$t1, $t1, -48
+	add	$t0, $t0, $t1
+
+	add	$v0,$0, $t0
+
+	lw	$ra, 8($sp)
+	lw	$t0, 4($sp)
+	lw	$t1, 0($sp)
+	addi 	$sp, $sp, 12
+	
+	jr	$ra
+
+# --------------------------------------------
 Month:
-	add  $v0, $0, 7
-	jr   $ra
+	addi 	$sp, $sp, -4
+	sw	$ra, 0($sp)
+
+	la	$a0, 3($a0)
+	jal	Day
+	add	$v0,$0, $v0
+
+	lw	$ra, 0($sp)
+	addi 	$sp, $sp, 4
+	
+	jr	$ra
+
+# --------------------------------------------
+
 Year:
-	add  $v0, $0, 2003
-	jr   $ra
+	addi 	$sp, $sp, -12
+	sw	$ra, 8($sp)
+	sw	$t0, 4($sp)
+	sw	$t1, 0($sp)
+
+	la	$a0, 6($a0)
+	jal	Day
+	add	$t0,$0, $v0
+	
+	addi	$t1,$0, 100
+	mult	$t0, $t1
+	mflo	$t0
+
+	la	$a0, 2($a0)
+	jal	Day
+	add	$t0, $t0, $v0
+
+	add	$v0,$0, $t0
+
+	lw	$ra, 8($sp)
+	lw	$t0, 4($sp)
+	lw	$t1, 0($sp)
+	addi 	$sp, $sp, 12
+	
+	jr	$ra
 	
 GetMonthName: #char*GetMonthName(int month) #tra ve ten cua thang do
 	addi $sp, $sp, -8
